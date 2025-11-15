@@ -174,8 +174,12 @@ const LyricSettingRef = ref(null);
 
 // 歌词文本点击事件
 const lrcTextClick = (time) => {
-  if (typeof $player !== "undefined") setSeek($player, time);
-  music.setPlayState(true);
+  if (typeof $player !== "undefined") {
+    // 防止soundStop被调用
+    music.persistData.playSongTime.currentTime = time;
+    $player.seek(time);
+    music.setPlayState(true);
+  }
   lrcMouseStatus.value = false;
 };
 
@@ -370,6 +374,9 @@ watch(
       width: 100%;
       height: 100%;
       background-color: #00000060;
+    }
+
+    &:not(.eplor) {
       backdrop-filter: blur(20px);
     }
 
